@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bài tập 3 - Game Đoán Số</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        text-align: center;
+        padding: 50px;
+        background-color: #2c3e50;
+        color: white;
+      }
+      .game-box {
+        background: #34495e;
+        padding: 40px;
+        border-radius: 10px;
+        max-width: 400px;
+        margin: 0 auto;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      }
+      input {
+        padding: 10px;
+        width: 60%;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #e67e22;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #d35400;
+      }
+      .message {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 1.2em;
+        height: 30px;
+      }
+      .count {
+        color: #bdc3c7;
+        margin-top: 10px;
+        font-size: 0.9em;
+      }
+
+      /* Confetti Animation Đơn giản bằng CSS */
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background-color: #f1c40f;
+        animation: fall linear forwards;
+        top: -10px;
+        z-index: 999;
+      }
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(720deg);
+        }
+      }
+
+      .explanation {
+        max-width: 400px;
+        margin: 30px auto;
+        background: #ecf0f1;
+        color: #333;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: left;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bài 3: Đoán Số Bí Mật</h1>
+    <a href="index.html" style="color: #3498db">Về trang chủ</a><br /><br />
+
+    <div class="game-box">
+      <p>Tôi đã chọn một số từ 1 đến 100.</p>
+      <input type="number" id="guessInput" placeholder="Nhập số của bạn..." />
+      <br />
+      <button onclick="checkGuess()">Đoán ngay</button>
+      <button
+        onclick="resetGame()"
+        style="background: #7f8c8d; margin-left: 5px"
+      >
+        Chơi lại
+      </button>
+
+      <div class="message" id="msg"></div>
+      <div class="count">Số lần thử: <span id="attempts">0</span></div>
+    </div>
+
+    <script>
+      let randomNumber;
+      let attemptCount = 0;
+      const msgEl = document.getElementById("msg");
+      const countEl = document.getElementById("attempts");
+      const inputEl = document.getElementById("guessInput");
+
+      function initGame() {
+        // Random số từ 1 đến 100
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        attemptCount = 0;
+        countEl.innerText = 0;
+        msgEl.innerText = "";
+        msgEl.style.color = "white";
+        inputEl.value = "";
+        // Xóa confetti nếu có
+        document.querySelectorAll(".confetti").forEach((e) => e.remove());
+      }
+
+      function checkGuess() {
+        const userGuess = parseInt(inputEl.value);
+
+        // Validation Input
+        if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+          msgEl.innerText = "Vui lòng nhập số hợp lệ từ 1-100!";
+          msgEl.style.color = "#e74c3c";
+          return;
+        }
+
+        attemptCount++;
+        countEl.innerText = attemptCount;
+
+        if (userGuess === randomNumber) {
+          msgEl.innerText = `Chính xác! Số bí mật là ${randomNumber}`;
+          msgEl.style.color = "#2ecc71";
+          createConfetti();
+        } else if (userGuess < randomNumber) {
+          msgEl.innerText = "Quá thấp! Thử lại xem.";
+          msgEl.style.color = "#f39c12";
+        } else {
+          msgEl.innerText = "Quá cao! Giảm xuống chút.";
+          msgEl.style.color = "#f39c12";
+        }
+      }
+
+      function resetGame() {
+        initGame();
+      }
+
+      // Tạo hiệu ứng Confetti
+      function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement("div");
+          confetti.classList.add("confetti");
+          confetti.style.left = Math.random() * 100 + "vw";
+          confetti.style.animationDuration = Math.random() * 2 + 2 + "s"; // 2s - 4s
+          confetti.style.backgroundColor = `hsl(${
+            Math.random() * 360
+          }, 100%, 50%)`;
+          document.body.appendChild(confetti);
+
+          // Xóa bớt sau khi rơi xong để nhẹ máy
+          setTimeout(() => confetti.remove(), 4000);
+        }
+      }
+
+      // Khởi chạy game lần đầu
+      initGame();
+    </script>
+  </body>
+</html>
